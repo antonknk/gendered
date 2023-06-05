@@ -1,7 +1,7 @@
 #' any_gender
 #'
 #' Calculates and stores occurance of gendered words
-#'
+#' @param text  a character vector
 #' @return A list
 #' @export
 any_gender <- function(text){
