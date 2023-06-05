@@ -60,7 +60,8 @@ any_gender <- function(text){
 
 
     return(
-        list(
+        tibble(
+            gender_stat = list(list(
             "matches_pair" = matches_pair,
             "anygender_pair" = anygender_pair,
             "n_gendered_pair" = n_gendered_pair,
@@ -76,6 +77,6 @@ any_gender <- function(text){
             "percent_gendered_neutral" = percent_gendered_neutral,
             "total_gendered_n" = total_gendered_n,
             "total_gendered_percent" = total_gendered_percent
-        )
+        )))
     )
 }
