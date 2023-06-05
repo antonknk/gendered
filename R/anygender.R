@@ -1,10 +1,20 @@
 # simple function to give number of matches across all forms of gendering
 test <- "Die Wählerinnen und Wähler, aber auch Gründer und Gründerinnen, Aber wie ist es
-        mit Jurist*innen und Zahnärzt:innen? An die Fleischer_innen und BauerInnen, wer denk an die?"
+        mit Jurist*innen und Zahnärzt:innen? An die Fleischer_innen und BauerInnen, wer denk an die?.
+Außerdem gibt es auch Studierende und Blamierende"
 
 any_gender <- function(text){
-    # pair gendering
+    if (!("neutral_forms" %in% ls())){
+        load("data/neutral.RDA")
+        neutral_forms <- neutral %>%
+            dplyr::pull("gendergerechte_alternativen") %>%
+            paste0("\\b", ., "\\b") %>%
+            paste0(collapse = "|")
+    }
 
+
+
+    # pair gendering
     anygender_pair <- text %>%
         stringr::str_remove_all("-|\\bliebe\\b|\\bdie\\b|\\bden\\b|\\bder\\b|\\bauch\\b|\\bwerte\\b") %>%
         stringr::str_squish() %>%
@@ -35,22 +45,39 @@ any_gender <- function(text){
 
     percent_gendered_symbol <- n_gendered_symbol / n_words
 
+    # neutrals gendering
+    anygender_neutral <- text %>%
+        stringr::str_squish() %>%
+        stringr::str_detect(neutral_forms)
+
+    matches_neutral <- text %>%
+        stringr::str_squish() %>%
+        stringr::str_extract_all(neutral_forms)
+
+    n_gendered_neutral <- length(purrr::pluck(matches_neutral, 1))
+
+    percent_gendered_neutral <- n_gendered_neutral / n_words
+
     # TOTAL STAT
-    total_gendered_n = sum(c(n_gendered_symbol, n_gendered_pair), na.rm = T)
+    total_gendered_n = sum(c(n_gendered_symbol, n_gendered_pair, n_gendered_neutral), na.rm = T)
     total_gendered_percent = total_gendered_n / n_words
 
 
     return(
         list(
             "matches_pair" = matches_pair,
-                        "anygender_pair" = anygender_pair,
-                        "n_gendered_pair" = n_gendered_pair,
-                        "n_words" = n_words,
-                        "percent_gendered_pair" = percent_gendered_pair,
-                        "matches_symbol" = matches_symbol,
-                        "anygender_symbol" = anygender_symbol,
-                        "n_gendered_symbol" = n_gendered_symbol,
+            "anygender_pair" = anygender_pair,
+            "n_gendered_pair" = n_gendered_pair,
+            "n_words" = n_words,
+            "percent_gendered_pair" = percent_gendered_pair,
+            "matches_symbol" = matches_symbol,
+            "anygender_symbol" = anygender_symbol,
+            "n_gendered_symbol" = n_gendered_symbol,
             "percent_gendered_symbol" = percent_gendered_symbol,
+            "matches_neutral" = matches_neutral,
+            "anygender_neutral" = anygender_neutral,
+            "n_gendered_neutral" = n_gendered_neutral,
+            "percent_gendered_neutral" = percent_gendered_neutral,
             "total_gendered_n" = total_gendered_n,
             "total_gendered_percent" = total_gendered_percent
         )
