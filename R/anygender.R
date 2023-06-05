@@ -1,18 +1,14 @@
-# simple function to give number of matches across all forms of gendering
-test <- "Die Wählerinnen und Wähler, aber auch Gründer und Gründerinnen, Aber wie ist es
-        mit Jurist*innen und Zahnärzt:innen? An die Fleischer_innen und BauerInnen, wer denk an die?.
-Außerdem gibt es auch Studierende und Blamierende"
-
+#' any_gender
+#'
+#' Calculates and stores occurance of gendered words
+#'
+#' @return A list
+#' @export
 any_gender <- function(text){
-    if (!("neutral_forms" %in% ls())){
-        load("data/neutral.RDA")
-        neutral_forms <- neutral %>%
-            dplyr::pull("gendergerechte_alternativen") %>%
-            paste0("\\b", ., "\\b") %>%
-            paste0(collapse = "|")
-    }
-
-
+    neutral_forms <- gendered::neutral %>%
+        dplyr::pull("gendergerechte_alternativen") %>%
+        paste0("\\b", ., "\\b") %>%
+        paste0(collapse = "|")
 
     # pair gendering
     anygender_pair <- text %>%
@@ -83,6 +79,3 @@ any_gender <- function(text){
         )
     )
 }
-
-any_gender(test)
-
